@@ -9,6 +9,7 @@ import (
 	"project0/internal/logger"
 	"project0/internal/server"
 	"project0/internal/storage"
+	"project0/internal/stream"
 	"project0/models"
 )
 
@@ -17,32 +18,35 @@ func main() {
 	//Init config and logger
 
 	cfg := config.Mustload()
-	_ = cfg
 	log := logger.SetLogger()
-	log.Info("start app", slog.String("env", "local"))
+
+	log.Info("init config & logger success")
 
 	// Init storage
-	//path := "user=gros password=grosBerg22 dbname=wb_db sslmode=disable"
+
 	stor, err := storage.New(cfg.StoragePath)
 	if err != nil {
 		log.Error("fail to connect postgres", err)
 	}
+
 	log.Info("init storage success")
-	_ = stor
 
 	//Raising up the cache from DB
-	cache_map := map[string]models.Order{}
-	Cache := cache.MakeCache(stor, cache_map)
-	_ = Cache
+	cacheMap := map[string]models.Order{}
+	Cache := cache.MakeCache(stor, cacheMap)
 
 	//Read data from stream to DB and Cache
-	//err = stream.SavetoDBandCache(stor, Cache)
-	//if err != nil {
-	//	log.Error("MAIN save error ", err)
-	//}
+	err = stream.SavetoDBandCache(stor, Cache)
+	if err != nil {
+		log.Error("MAIN save error ", err)
+	}
+
+	//Set Routers
 
 	router := chi.NewRouter()
 	router.Get("/", v1.OrderGetter(log, Cache))
+
+	// Start server
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 

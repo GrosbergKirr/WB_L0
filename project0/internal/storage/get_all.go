@@ -125,7 +125,7 @@ func (s *Storage) OldGet() []models.Order {
 
 func (s *Storage) InsertJson(uid string, dataj []byte) {
 
-	insstmt, err := s.Db.Prepare("INSERT INTO data VALUES($1, $2)")
+	insstmt, err := s.Db.Prepare("INSERT INTO data_ord VALUES($1, $2)")
 	if err != nil {
 		log.Fatalf("insert prepare mistake\n%s", err)
 	}
@@ -139,7 +139,7 @@ func (s *Storage) InsertJson(uid string, dataj []byte) {
 }
 func (s *Storage) GetAllFromDb() []models.Order {
 
-	dt, err := s.Db.Query("select data from data")
+	dt, err := s.Db.Query("select orders from data_ord")
 	if err != nil {
 		log.Fatalf("insert prepare mistake\n%s", err)
 	}

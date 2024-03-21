@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/go-chi/render"
 	"log/slog"
 	"net/http"
@@ -22,7 +21,7 @@ func OrderGetter(log *slog.Logger, cache map[string]models.Order) http.HandlerFu
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		id := req.Uid
-		fmt.Println(id)
+		log.Info("Get Uid from http:", []string{id})
 
 		StatusGetRespOK(w, r, cache[id])
 		log.Debug("render json")
