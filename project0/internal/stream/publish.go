@@ -11,10 +11,6 @@ import (
 	"time"
 )
 
-func main() {
-	PublishToNats()
-}
-
 func PublishToNats() {
 	uid := NewRandomString(20)
 	d := models.Delivery{uid, "Test Testov", "+9720000000", 2639809, "Kiryat Mozkin",
