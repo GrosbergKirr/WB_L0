@@ -11,7 +11,11 @@ import (
 	"time"
 )
 
-func Publish() {
+func main() {
+	PublishToNats()
+}
+
+func PublishToNats() {
 	uid := NewRandomString(20)
 	d := models.Delivery{uid, "Test Testov", "+9720000000", 2639809, "Kiryat Mozkin",
 		"Ploshad Mira 15", "Kraiot", "est@gmail.com"}
@@ -33,7 +37,7 @@ func Publish() {
 		panic(err)
 	}
 
-	err = PublishToNATS(a)
+	err = JSConnectPub(a)
 	if err != nil {
 		fmt.Errorf("publish mistake", err)
 	}
@@ -41,21 +45,8 @@ func Publish() {
 	fmt.Printf("Publish to stream: %s", uid)
 
 }
-func NewRandomString(size int) string {
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	chars := []rune("abcdefghijklmnopqrstuvwxyz" +
-		"0123456789")
-
-	b := make([]rune, size)
-	for i := range b {
-		b[i] = chars[rnd.Intn(len(chars))]
-	}
-
-	return string(b)
-}
-
-func PublishToNATS(msg []byte) error {
+func JSConnectPub(msg []byte) error {
 	// connect to nats server
 	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
@@ -83,4 +74,18 @@ func PublishToNATS(msg []byte) error {
 	}
 
 	return nil
+}
+
+func NewRandomString(size int) string {
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	chars := []rune("abcdefghijklmnopqrstuvwxyz" +
+		"0123456789")
+
+	b := make([]rune, size)
+	for i := range b {
+		b[i] = chars[rnd.Intn(len(chars))]
+	}
+
+	return string(b)
 }
