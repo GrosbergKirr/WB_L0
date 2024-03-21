@@ -9,6 +9,7 @@ import (
 	"log"
 	"project0/models"
 	"project0/tools"
+	"sync"
 	"time"
 )
 
@@ -20,6 +21,7 @@ func SavetoDBandCache(saver Saver, cache map[string]models.Order) error {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	ch := make(chan []byte)
 	var res []byte
+	mu := sync.Mutex{}
 loop:
 	for {
 		go SubscribeNATS(ch, ctx)
@@ -34,10 +36,12 @@ loop:
 				log.Fatalf("unmarshal mistake,: %s", err)
 			}
 			if tools.Checker(cache, o.OrderUid) {
+				mu.Lock()
 				saver.InsertJson(o.OrderUid, res)
 
 				cache[o.OrderUid] = *o
 				fmt.Printf("Get order from stream. Uid: %s\n", o.OrderUid)
+				mu.Unlock()
 			}
 		}
 	}
