@@ -35,11 +35,14 @@ func main() {
 	cacheMap := map[string]models.Order{}
 	Cache := cache.MakeCache(stor, cacheMap)
 
+	log.Info("Raise cache success")
+
 	//Read data from stream to DB and Cache
 	err = stream.SavetoDBandCache(stor, Cache)
 	if err != nil {
 		log.Error("MAIN save error ", err)
 	}
+	log.Info("read from stream success")
 
 	//Set Routers
 
